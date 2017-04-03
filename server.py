@@ -32,7 +32,10 @@ def run(sql_format, **kwargs):
 def election():
     return run(
         '''
-        SELECT e.year, e.winner, e.population, e.num_voted, e.total_electoral_votes,                  r.name, r.party, r.popular_votes, r.electoral_votes, (r.popular_votes / e.num_voted) as percent_popular, (r.electoral_votes / e.total_electoral_votes) as percent_electoral,
+        SELECT e.year, e.winner, e.population, e.num_voted, e.total_electoral_votes, 
+               r.name, r.party, r.popular_votes, r.electoral_votes, 
+               (r.popular_votes / e.num_voted) as percent_popular, 
+               (r.electoral_votes / e.total_electoral_votes) as percent_electoral,
                p.month AS prior_poll_month, p.percent AS prior_poll_percent
         FROM election e, ran_in r
         LEFT OUTER JOIN prior_poll p
@@ -67,7 +70,7 @@ def re_elected():
         SELECT p.name, e1.year AS first_year, e3.year AS second_year
         FROM election e1, election e2, election e3, person p
         WHERE p.name = e1.winner AND p.name != e2.winner AND p.name = e3.winner
-	AND e1.year < e2.year AND e2.year < e3.year;
+        AND e1.year < e2.year AND e2.year < e3.year;
         '''
     )
 
@@ -82,7 +85,7 @@ def swing():
                e2.winner AS second_winner
         FROM person p, ran_in r1, ran_in r2, election e1, election e2
         WHERE p.name = r1.name AND r1.name = r2.name AND r1.year < r2.year
-	AND r1.party != r2.party AND r1.year = e1.year AND r2.year = e2.year
+        AND r1.party != r2.party AND r1.year = e1.year AND r2.year = e2.year
         ORDER BY p.name;
 	'''
     )
@@ -92,9 +95,9 @@ def party():
     cursor.execute(
         '''
         SELECT r.party, e.year, r.electoral_votes, r.popular_votes, e.total_electoral_votes, e.num_voted
-	FROM election e, ran_in r
-	WHERE r.party = '{party}' AND r.year = e.year;
-	'''.format(party=request.args.get('party'))
+	    FROM election e, ran_in r
+        WHERE r.party = '{party}' AND r.year = e.year;
+	    '''.format(party=request.args.get('party'))
     )
     years = list(cursor)
     yearly_columns = cursor.column_names
@@ -123,11 +126,10 @@ def closest():
         '''
         SELECT e.year, r1.name, r1.popular_votes, r2.name, r2.popular_votes, e.winner,
                (r1.popular_votes - r2.popular_votes) AS popular_vote_difference
-	FROM election e, ran_in r1, ran_in r2,
-             (SELECT year, MAX(popular_votes) AS max FROM ran_in GROUP BY year) first
-	WHERE e.year = first.year AND e.year = r1.year AND e.year = r2.year AND r1.popular_votes = first.max
-              AND r2.popular_votes IN
-              (SELECT MAX(popular_votes) FROM ran_in WHERE year = first.year AND popular_votes <> first.max)
+        FROM election e, ran_in r1, ran_in r2,
+            (SELECT year, MAX(popular_votes) AS max FROM ran_in GROUP BY year) first
+	         WHERE e.year = first.year AND e.year = r1.year AND e.year = r2.year AND r1.popular_votes = first.max
+             AND r2.popular_votes IN (SELECT MAX(popular_votes) FROM ran_in WHERE year = first.year AND popular_votes <> first.max)
         ORDER BY r1.popular_votes - r2.popular_votes ASC;
         '''
     )
@@ -138,10 +140,10 @@ def landslide():
         '''
         SELECT e.year, r1.name, r1.popular_votes, r2.name, r2.popular_votes, e.winner,
                (r1.popular_votes - r2.popular_votes) AS popular_vote_difference
-	FROM election e, ran_in r1, ran_in r2,
+	    FROM election e, ran_in r1, ran_in r2,
              (SELECT year, MAX(popular_votes) AS max FROM ran_in GROUP BY year) first
-	WHERE e.year = first.year AND e.year = r1.year AND e.year = r2.year AND r1.popular_votes = first.max
-              AND r2.popular_votes IN
+	    WHERE e.year = first.year AND e.year = r1.year AND e.year = r2.year AND r1.popular_votes = first.max
+        AND r2.popular_votes IN
               (SELECT MAX(popular_votes) FROM ran_in WHERE year = first.year AND popular_votes <> first.max)
         ORDER BY (r1.popular_votes - r2.popular_votes) DESC;
         '''
@@ -163,7 +165,7 @@ def lowest_ranking():
     return run(
         '''
         SELECT p.name, p.ranking
-	FROM person p
+	    FROM person p
         WHERE p.ranking IS NOT NULL
         ORDER BY p.ranking ASC
         '''
