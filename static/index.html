@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    Select Query:
+  
+  <style>
+    table, td, th {    
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    th, td {
+      padding: 10px;
+    }
+  </style>
+
+    <select name="query" id="dropdown">
+      <option value="eyq">Election Year Query</option>
+      <option value="pcq">President/Candidate Query</option>
+      <option value="rncq">Re-Elected Non-Contiguous Query</option>
+      <option value="scq">Swing Candidate Query</option>
+      <option value="phq">Party History Query</option>
+      <option value="ceq">Closest Elections Query</option>
+      <option value="llvq">Largest Landslide Victory Query</option>
+      <option value="mppq">Most Popular Presidents Query</option>
+      <option value="lrpq">Lowest Ranking Presidents Query</option>
+      <br><br>
+    </select>
+
+    <div id="extra"></div>
+
+    <input type="submit" id="button">
+    <br></br>
+    <div id="results"></div>
+
+  </body>
+  <script src="index.js"></script>
+</html>
